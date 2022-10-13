@@ -24,7 +24,6 @@ DEVELOPER_KEY: str = config("DEVELOPER_KEY", cast=str, default='')
 YOUTUBE_API_SERVICE_NAME: str = config(
     "YOUTUBE_API_SERVICE_NAME", cast=str, default='')
 YOUTUBE_API_VERSION = 'v3'
-
 # logging configuration
 LOGGING_LEVEL = logging.DEBUG if DEBUG else logging.INFO
 logging.basicConfig(
