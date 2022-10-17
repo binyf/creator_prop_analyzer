@@ -17,17 +17,19 @@ async def search_channels(youtube, query):
         maxResults=10
     ).execute()
     channels = []
-    while response:
-        for item in response['items']:
-            channel = item['snippet']
-            channel_info = ChannelInfo(
-                channel_id=channel['channelId'],
-                channel_name=channel['title'],
-                thumbnail=channel['thumbnails']['medium']['url']
-            )
-            channels.append(channel_info)
-        if 'nextPageToken' in response:
-            break
+    if response['items'] != []:
+        while response:
+            for item in response['items']:
+                channel = item['snippet']
+                channel_info = ChannelInfo(
+                    channel_id=channel['channelId'],
+                    channel_name=channel['title'],
+                    description=channel['description'],
+                    thumbnail=channel['thumbnails']['medium']['url']
+                )
+                channels.append(channel_info)
+            if 'nextPageToken' in response:
+                break
     return channels
 
 
@@ -56,6 +58,7 @@ async def get_comments(youtube, channel_id, n):
 
 @router.get("/channel/{channel_name}")
 async def channel_search(channel_name: str):
+    print(channel_name)
     future = search_channels(youtube, channel_name)
     channels = await future
     return ChannelResponse(channels=channels)
