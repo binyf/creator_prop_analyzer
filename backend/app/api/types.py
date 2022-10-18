@@ -8,6 +8,10 @@ class ChannelInfo(BaseModel):
     description: str
     thumbnail: str
 
+class ChannelStatistics(BaseModel):
+    view_count : int
+    sub_count : int
+    vid_count : int
 
 class ChannelResponse(BaseModel):
     channels: List[ChannelInfo]
