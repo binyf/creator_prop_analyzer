@@ -18,36 +18,40 @@ async def search_channels(youtube, query):
         maxResults=10
     ).execute()
     channels = []
-    if response['items'] != []:
-        while response:
-            for item in response['items']:
-                channel = item['snippet']
-                channel_info = ChannelInfo(
-                    channel_id=channel['channelId'],
-                    channel_name=channel['title'],
-                    description=channel['description'],
-                    thumbnail=channel['thumbnails']['medium']['url']
-                )
-                channels.append(channel_info)
-            if 'nextPageToken' in response:
-                break
+    if response['pageInfo']['totalResults'] != 0:
+        for item in response['items']:
+            channel = item['snippet']
+            channel_info = ChannelInfo(
+                channel_id=channel['channelId'],
+                channel_name=channel['title'],
+                description=channel['description'],
+                thumbnail=channel['thumbnails']['medium']['url']
+            )
+            channels.append(channel_info)
     return channels
 
 
 async def search_channel_info(youtube, channel_id):
     response = youtube.channels().list(
         id=channel_id,
-        part='statistics',
+        part='statistics, brandingSettings',
     ).execute()
     if response['pageInfo']['totalResults'] == 1:
-        while response:
-            for item in response['items']:
+        for item in response['items']:
+            try:
                 return ChannelStatistics(
                     view_count=int(item['statistics']['viewCount']),
                     sub_count=int(item['statistics']['subscriberCount']),
                     vid_count=int(item['statistics']['videoCount']),
+                    banner_url=item['brandingSettings']['image']['bannerExternalUrl']
                 )
-
+            except:
+                return ChannelStatistics(
+                    view_count=int(item['statistics']['viewCount']),
+                    sub_count=int(item['statistics']['subscriberCount']),
+                    vid_count=int(item['statistics']['videoCount']),
+                    banner_url=''
+                )
     else:
         return False
 
@@ -56,12 +60,14 @@ async def get_comments(youtube, channel_id, n):
     response = youtube.commentThreads().list(
         part="snippet,replies",
         allThreadsRelatedToChannelId=channel_id,
-        maxResults=n,
+        maxResults=100,
         order="time"
     ).execute()
     comments = []
-    if response['items'] != []:
-        while response:
+    while response:
+        try:
+            if len(comments) > n:
+                break
             for item in response['items']:
                 comment = item['snippet']['topLevelComment']['snippet']
                 comments.append(comment['textDisplay'])
@@ -70,9 +76,12 @@ async def get_comments(youtube, channel_id, n):
                         reply = reply_item['snippet']
                         comments.append(reply['textDisplay'])
             if 'nextPageToken' in response:
-                #    response = youtube.commentThreads().list(part='snippet,replies', videoId='x2kcdJo1uwU', pageToken=response['nextPageToken'], maxResults=100).execute()
-                # else:
+                response = youtube.commentThreads().list(part='snippet,replies', allThreadsRelatedToChannelId=channel_id,
+                                                         pageToken=response['nextPageToken'], maxResults=100, order='time').execute()
+            else:
                 break
+        except:
+            break
     return comments
 
 
