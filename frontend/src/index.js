@@ -1,18 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import Main from './main';
+import Main from './pages/main';
+import Analyzer from './pages/Analyzer';
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom'
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 function Page() {
-  // const userid = localStorage.getItem("userid");
     return (
       <BrowserRouter>
         <Routes>
           <Route path={"/*"} element={<Navigate replace to={"/main"} />} />
           <Route path={"/main"} element={<Main/>} />
+          <Route path={"/analyze"} element={<Analyzer/>} />
         </Routes>
       </BrowserRouter>
     );

@@ -148,6 +148,8 @@ function Main() {
       <Dialog
           open={open}
           onClose={()=>{setOpen(false)}}
+          fullWidth='true'
+          maxWidth='md'
         >
           <ChannelCard info = {ch_info}/>
         </Dialog>
