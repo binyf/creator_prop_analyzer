@@ -70,11 +70,13 @@ async def get_comments(youtube, channel_id, n):
                 break
             for item in response['items']:
                 comment = item['snippet']['topLevelComment']['snippet']
-                comments.append(comment['textDisplay'])
+                if len(comment['textDisplay']) < 300:
+                    comments.append(comment['textDisplay'])
                 if item['snippet']['totalReplyCount'] > 0:
                     for reply_item in item['replies']['comments']:
                         reply = reply_item['snippet']
-                        comments.append(reply['textDisplay'])
+                        if len(reply['textDisplay']) < 300:
+                            comments.append(reply['textDisplay'])
             if 'nextPageToken' in response:
                 response = youtube.commentThreads().list(part='snippet,replies', allThreadsRelatedToChannelId=channel_id,
                                                          pageToken=response['nextPageToken'], maxResults=100, order='time').execute()

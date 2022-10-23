@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Dict
 
 
 class ChannelInfo(BaseModel):
@@ -18,3 +18,9 @@ class ChannelStatistics(BaseModel):
 
 class ChannelResponse(BaseModel):
     channels: List[ChannelInfo]
+
+
+class AnalyzedResponse(BaseModel):
+    totalsum: dict
+    comment_num: int
+    top_3: List[list]
