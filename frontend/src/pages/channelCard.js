@@ -39,8 +39,12 @@ export default function ChannelCard(props) {
     return(
         <div className="outer-card">
             {stat === '' ? <div/> :
-            <div>
-            <Container component="main" maxWidth="xl" style={{backgroundImage:`url(${stat.banner_url})`}}>
+            <div className="outer-card">
+            <Container component="main" maxWidth="xl" style={{
+              backgroundImage:`url(${stat.banner_url})`,
+              backgroundRepeat: 'no-repeat',
+              backgroundSize : 'contain'
+              }}>
               <Card className='thumb-paper'>
                 <CardMedia
                   component="img"
@@ -79,6 +83,9 @@ export default function ChannelCard(props) {
             <Toolbar sx={{justifyContent:'center'}}>
             <Button variant="contained" onClick={()=>{
               window.localStorage.setItem("channel_id", props.info.id)
+              window.localStorage.setItem("channel_img", props.info.img)
+              window.localStorage.setItem("channel_name", props.info.name)
+              window.localStorage.setItem("banner", stat.banner_url)
               window.location.href = '/analyze'
             }}>이 채널 분석하기</Button>
             </Toolbar>

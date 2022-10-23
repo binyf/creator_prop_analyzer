@@ -6,9 +6,9 @@ import Box from "@mui/material/Box"
 import Toolbar from "@mui/material/Toolbar"
 import TextField from "@mui/material/TextField"
 import Button from "@mui/material/Button"
+import ListItemButton from '@mui/material/ListItemButton';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
 import Divider from '@mui/material/Divider';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
@@ -18,7 +18,6 @@ import Alert from '@mui/material/Alert'
 import Snackbar from '@mui/material/Snackbar';
 import Dialog from "@mui/material/Dialog";
 import ChannelCard from "./channelCard";
-
 
 function Main() {
   const [text, setText] = React.useState('')
@@ -57,6 +56,19 @@ function Main() {
       })
       .catch((error) => {console.log(error)});
   };
+  const search = ()=>{
+    if (text !== ''){
+      channel_search(text);
+    }
+    else{
+      handleAlert();
+    }
+  }
+  const keyHandler = (event)=>{
+      if(event.key === "Enter"){
+        search();
+      }
+  };
   return (
     <div>
       <Snackbar open={alert} autoHideDuration={3000} onClose={handleAlertClose}>
@@ -90,28 +102,22 @@ function Main() {
         fullWidth 
         value = {text} 
         label="채널 검색" 
+        onKeyDown={keyHandler}
         onChange = {(e)=>setText(e.target.value)} />
         <Button 
         size = 'large'
-        onClick={()=>{
-          if (text !== ''){
-            channel_search(text)
-          }
-          else{
-            handleAlert()
-          }
-          
-        }}
+        onClick={search}
         >검색</Button>
         </Toolbar>
 
       {check ? 
-        <List sx={{ width: '100%', bgcolor: 'background.paper', overflow: 'auto', maxHeight: `${window.innerHeight*0.6}px`}}>
+        <List sx={{ width: '100%', bgcolor: 'background.paper', overflow: 'auto', maxHeight: `${window.innerHeight*0.43}px`}}>
           {
             channels.map((channel,index) => (
               <Grow in={check}  {...(check ? { timeout: 300*(index+1) } : {})}>
             <ListItemButton 
             alignItems="flex-start" 
+            key={index}
             onClick = {() =>{
               setInfo({
                 id:channel.channel_id,
@@ -145,10 +151,10 @@ function Main() {
           }
         </List>
       :<div/>}
-      <Dialog
+        <Dialog
           open={open}
           onClose={()=>{setOpen(false)}}
-          fullWidth='true'
+          fullWidth={true}
           maxWidth='md'
         >
           <ChannelCard info = {ch_info}/>
