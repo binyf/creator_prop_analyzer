@@ -18,17 +18,15 @@ import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import PropTypes from 'prop-types';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import Divider from '@mui/material/Divider';
-import ListItemText from '@mui/material/ListItemText';
+
 
 export default function Analyzer(props) {
     const [state, setState] = React.useState(false);
     const [barData, setBarData] = React.useState();
     const [radarData, setRadarData] = React.useState();
     const [pieData, setPieData] = React.useState();
-    const [page, setPage] = React.useState(true);
-    const [top3, setTop3] = React.useState();
+    const [numComment, setNumComment] = React.useState(0);
+    const [topComment, setTopComment] = React.useState();
     const id = window.localStorage.getItem('channel_id')
     const thumb_url = window.localStorage.getItem('channel_img')
     const banner_url = window.localStorage.getItem('banner')
@@ -45,7 +43,9 @@ export default function Analyzer(props) {
       setBarData(result[0]);
       setRadarData(result[1]);
       setPieData(result[2]);
-      setTop3(result[3]);
+      setTopComment(result[3]);
+      setNumComment(result[4]);
+      console.log(numComment)
       setState(true);
     }
     const [value, setValue] = React.useState(0);
@@ -86,10 +86,17 @@ export default function Analyzer(props) {
     return(
         <>
             {state ?
+            <>
+            <div style={{backgroundColor : `${barData[0]['clean'] >= 70 ? '#cfffaa'
+                   : barData[0]['clean'] >= 50 ? '#fff5ce' 
+                   : '#ffafaf' }`}}>
             <Container className = 'outer-div' component='main' maxWidth="lg" style={{
               backgroundImage:`url(${banner_url})`,
-              backgroundRepeat: 'repeat',
-              backgroundSize : 'contain'
+              backgroundRepeat: 'no-repeat',
+              backgroundSize : 'contain',
+              backgroundColor : `${barData[0]['clean'] >= 70 ? '#cfffaa'
+              : barData[0]['clean'] >= 50 ? '#fff5ce' 
+              : '#ffafaf' }`
               }}>
               <Tooltip title="뒤로가기">
               <IconButton color="primary" onClick={()=>{
@@ -101,16 +108,18 @@ export default function Analyzer(props) {
               </Tooltip>
               
               <Grid container rowSpacing={4} columnSpacing={2}>
+                {numComment >= 100 ?
+                  <>
                 <Grid xs={7}>
                 <Item  sx={{height:'450px', padding : '5%'}}>
                   <img alt = {channel_name} src = {thumb_url} style={{width : '300px', height: '300px'}}/>
                   <Typography color = 'black' fontSize={window.innerWidth*0.02}>
                     {channel_name}
                   </Typography>
-                  <Typography color = {barData[0]['clean'] >= 60 ? 'green'
-                   : barData[0]['clean'] >= 30 ? 'orange' 
+                  <Typography color = {barData[0]['clean'] >= 70 ? 'green'
+                   : barData[0]['clean'] >= 50 ? 'orange' 
                    : 'red' } fontSize={window.innerWidth*0.015}>
-                    {barData[0]['clean'] >= 60 ? '양호' : barData[0]['clean'] >= 30 ? '주의' : '경고' }
+                    {barData[0]['clean'] >= 70 ? '양호' : barData[0]['clean'] >= 50 ? '주의' : '경고' }
                   </Typography>
                   &nbsp;
                   <Typography>
@@ -126,6 +135,7 @@ export default function Analyzer(props) {
                   </Item>
                 </Grid>
                 
+
                 <Grid xs={12}>
                   <Item>
                   <Box sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex', height: 400 }}>
@@ -136,53 +146,81 @@ export default function Analyzer(props) {
                     onChange={handleChange}
                     sx={{ borderRight: 1, borderColor: 'divider' }}
                   >
-                    <Tab label="혐오현황" {...a11yProps(0)} />
-                    <Tab label="혐오분포" {...a11yProps(1)} />
+                    <Tab label="혐오표현비율" {...a11yProps(0)} />
+                    <Tab label="혐오표현분포" {...a11yProps(1)} />
                   </Tabs>
-                  <TabPanel style={{justifyContent:'center',alignItems:'center'}} value={value} index={0}>
-                    <Box sx={{width: 1000, height:400}}>
+                  <TabPanel value={value} index={0}>
+                    <Box sx={{ justifyContent:'center',alignItems:'center', width: 700, height:400}}>
                       <RadarGraph data = {radarData}/>
                     </Box>
                   </TabPanel>
                   <TabPanel value={value} index={1}>
-                    <Box sx={{width: 1000, height:400}}>
+                    <Box sx={{justifyContent:'center',alignItems:'center', width: 700, height:400}}>
                       <PieGraph data = {pieData}/>
                     </Box>
                   </TabPanel>
                   </Box>
                   </Item>
                 </Grid>
+
+
                 <Grid xs={12}>
-                  <Item sx={{height:'500px'}}>
-                    <List sx={{ width: '100%'}}>
-                      {console.log(top3)}
-                      {console.log(Array.isArray(top3))}
-                    {top3.map((comments,index)=>{
-                      {console.log(index,comments[0])}
-                      <h5>
-                        {comments[0]}
-                      </h5>
-                    //   <ListItemText
-                    //   primary={comments[0]}
-                    //   secondary={
-                    //     <React.Fragment>
-                    //       <Typography
-                    //         sx={{ display: 'inline' }}
-                    //         component="span"
-                    //         variant="body2"
-                    //         color="text.primary"
-                    //       >
-                    //         안녕
-                    //       </Typography>
-                    //     </React.Fragment>
-                    //   }
-                    // />
-                    })}
+                  <Item >
+                    <Typography color = 'black' variant='h4'>
+                      대표 댓글
+                    </Typography>
+                    &nbsp;
+                    <List sx={{ width: '100%', bgcolor: 'background.paper'}}>
+                      {topComment.map((comments,index)=>(
+                        <Grid container>
+                          <Grid xs={9}>
+                            <Typography textAlign='left' color = 'black' variant='h6'>
+                              <b>{comments[0]}</b>
+                            </Typography>
+                          </Grid>
+                          <Grid xs={3}>
+                            {comments[1].map((object,idx)=>(
+                              <Typography>
+                                  {object['label']} : {(object['score']*100).toFixed(3)}%
+                              </Typography>
+                            ))}
+                          
+                          </Grid>
+                    </Grid>
+                    ))}
                     </List>
                   </Item>
                 </Grid>
+                  </>
+              :
+                <>
+                  <Grid xs={7}>
+                <Item  sx={{height:'450px', padding : '5%'}}>
+                  <img alt = {channel_name} src = {thumb_url} style={{width : '300px', height: '300px'}}/>
+                  <Typography color = 'black' fontSize={window.innerWidth*0.02}>
+                    {channel_name}
+                  </Typography>
+                  <Typography>
+                      분석에 필요한 데이터가 충분하지 않습니다.
+                    </Typography>
+                </Item>
+                </Grid>
+                <Grid xs={5}>
+                  <Item sx={{justifyContent:'center', height:'470px', padding : '5%'}}>
+                    <Typography>
+                      분석에 필요한 데이터가 충분하지 않습니다.<br/>
+                      채널에 새로운 영상이 올라온 직후이거나 <br/>
+                      실시간 방송 진행 중에는 <br/>
+                      댓글 데이터 수집이 원활하지 않을 수 있습니다.
+                    </Typography>
+                  </Item>
+                </Grid>
+                </>              
+              }
              </Grid>
              </Container>
+            </div>
+            </>
              : 
              <>
              <div style={center}> 

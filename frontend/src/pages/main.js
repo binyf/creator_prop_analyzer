@@ -8,8 +8,6 @@ import TextField from "@mui/material/TextField"
 import Button from "@mui/material/Button"
 import ListItemButton from '@mui/material/ListItemButton';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import Divider from '@mui/material/Divider';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
@@ -18,6 +16,8 @@ import Alert from '@mui/material/Alert'
 import Snackbar from '@mui/material/Snackbar';
 import Dialog from "@mui/material/Dialog";
 import ChannelCard from "./channelCard";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 
 function Main() {
   const [text, setText] = React.useState('')
@@ -26,6 +26,8 @@ function Main() {
   const [alert, setAlert] = React.useState(false);
   const [ch_info, setInfo] = React.useState({id:'',name:'',img:''});
   const [open, setOpen] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+
   const handleAlert = () => {
     setAlert(true);
   };
@@ -39,7 +41,8 @@ function Main() {
   };
 
   const channel_search = (channel_name) => {
-    setCheck(false)
+    setCheck(false);
+    setLoading(true);
     const requestOptions = {
       method: "GET",
       headers: {
@@ -52,6 +55,7 @@ function Main() {
       .then((response) => response.json())
       .then((json) => {
         setChannels(json.channels)
+        setLoading(false);
         setCheck(true)
       })
       .catch((error) => {console.log(error)});
@@ -76,6 +80,9 @@ function Main() {
           채널명을 입력해주세요!
         </Alert>
       </Snackbar>
+      <Backdrop open={loading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
     <div className="outer-div">
       <Container component='main' maxWidth="xl">
         <Box
@@ -86,7 +93,7 @@ function Main() {
           alignItems: "center",
         }}
       >
-        <Typography variant="h4">테스트</Typography>
+        <Typography variant="h4">Youtube 채널 댓글 분석</Typography>
         </Box>
         <Box
         sx={{

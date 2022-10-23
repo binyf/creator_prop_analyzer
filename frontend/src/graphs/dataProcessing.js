@@ -1,13 +1,13 @@
-const { hslToRgb } = require('@mui/material');
 const _ = require('lodash')
 
 
 const sumValues = (obj) => Object.values(obj).reduce((a,b) => a+b,0);
 
+
 const data_process = (data) =>  {
     let n = data['comment_num'];
     let properties = data['totalsum'];
-    let top_3 = data['top_3'];
+    let top_c = data['top_C'];
     let hatespeech = _.cloneDeep(properties)
     let clean = properties['clean'];
     let badwords = properties['악플/욕설'];
@@ -19,11 +19,8 @@ const data_process = (data) =>  {
         {
           "비율": "비율",
           "clean": (clean / sum)*100,
-          "cleanColor": "hsl(129, 70%, 40%)",
           "일반 악성 댓글": (badwords / sum)*100,
-          "일반 악성 댓글Color": "hsl(41, 80%, 50%)",
           "혐오표현": (hatespeech/sum)*100,
-          "혐오표현Color": "hsl(2, 75%, 50%)",
         }
       ]
     let radar_data = [
@@ -110,13 +107,13 @@ const data_process = (data) =>  {
             "color" : "hsl(60,1%,50%)"
         },
     ]
-    let top3_array = []
-    for(let i=0;i<top_3.length;i++){
-        top3_array.push(top_3[i])
+    let topc_array = []
+    for(let i=0;i<top_c.length;i++){
+        let temp = [top_c[i][0], top_c[i][1].slice(0,5)]
+        topc_array.push(temp)
     }
-    // top3_array = new Array(top3_array)
 
-    return [bar_data, radar_data, pie_data,top3_array];
+    return [bar_data, radar_data, pie_data,topc_array,n];
 }
 
 export {data_process};
