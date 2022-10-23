@@ -11,7 +11,6 @@ router = APIRouter()
 async def prop_analyze(comments):
     result = {}
     top = []
-    print(len(comments))
     for i,prop in enumerate(pipe(comments)):
         temp = 0
         for p in prop:
@@ -24,24 +23,23 @@ async def prop_analyze(comments):
                 result[p['label']] =  p['score']
         if temp > 0.5:
             top.append([-temp,comments[i],prop])
-    top3 = []
+    topC = []
     cnt = 0
     heapq.heapify(top)
     while top:
-        if cnt >= 3:
+        if cnt >= 5:
             break
         t = heapq.heappop(top)
-        print(t)
-        top3.append(t[1:])
+        topC.append(t[1:])
         cnt+=1
     n = len(comments)
-            
-    return AnalyzedResponse(totalsum=result, comment_num=n, top_3=top3)
+    print(n)
+    return AnalyzedResponse(totalsum=result, comment_num=n, top_C=topC)
 
 
 @router.get("/analyze/{channel_id}")
 async def channel_search(channel_id: str):
-    future = get_comments(youtube,channel_id,500)
+    future = get_comments(youtube,channel_id,1000)
     comments = await future
     future =  prop_analyze(comments)
     properties = await future

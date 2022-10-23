@@ -23,4 +23,4 @@ class ChannelResponse(BaseModel):
 class AnalyzedResponse(BaseModel):
     totalsum: dict
     comment_num: int
-    top_3: List[list]
+    top_C: List[list]
