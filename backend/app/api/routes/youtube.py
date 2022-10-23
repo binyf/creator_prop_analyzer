@@ -5,8 +5,10 @@ from core.errors import PredictException
 from fastapi import APIRouter, HTTPException
 from loguru import logger
 from api.types import *
+import re
 
 router = APIRouter()
+c = re.compile('<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});|@\S*\s')
 
 
 async def search_channels(youtube, query):
@@ -71,12 +73,14 @@ async def get_comments(youtube, channel_id, n):
             for item in response['items']:
                 comment = item['snippet']['topLevelComment']['snippet']
                 if len(comment['textDisplay']) < 300:
-                    comments.append(comment['textDisplay'])
+                    filtered = re.sub(c, '', comment['textDisplay'])
+                    comments.append(filtered)
                 if item['snippet']['totalReplyCount'] > 0:
                     for reply_item in item['replies']['comments']:
                         reply = reply_item['snippet']
                         if len(reply['textDisplay']) < 300:
-                            comments.append(reply['textDisplay'])
+                            filtered = re.sub(c, '', reply['textDisplay'])
+                            comments.append(filtered)
             if 'nextPageToken' in response:
                 response = youtube.commentThreads().list(part='snippet,replies', allThreadsRelatedToChannelId=channel_id,
                                                          pageToken=response['nextPageToken'], maxResults=100, order='time').execute()
