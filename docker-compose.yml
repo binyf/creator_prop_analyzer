@@ -5,7 +5,8 @@ services:
     image: backend:backend
     ports:
       - "8000:8080"
-
+    container_name: backend
+  
   frontend:
     image: frontend:frontend
     ports:
