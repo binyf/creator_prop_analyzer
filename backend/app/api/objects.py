@@ -11,7 +11,7 @@ tokenizer = AutoTokenizer.from_pretrained(model_name)
 pipe = TextClassificationPipeline(
     model=model,
     tokenizer=tokenizer,
-    device=0,
+    device='cpu',
     top_k=11,
     function_to_apply='sigmoid'
 )
