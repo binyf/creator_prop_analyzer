@@ -43,6 +43,7 @@ function Main() {
   const channel_search = (channel_name) => {
     setCheck(false);
     setLoading(true);
+    console.log(window.process.env.REACT_APP_PROXY_HOST);
     const requestOptions = {
       method: "GET",
       headers: {
