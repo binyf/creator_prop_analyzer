@@ -5,11 +5,11 @@ services:
     image: backend:backend
     ports:
       - "8000:8080"
-    container_name: backend
+    container_name: back
   
   frontend:
     image: frontend:frontend
     ports:
       - "80:3000"
-#     environment:
-#       API_URL: backend:8000
+    container_name: front
+
