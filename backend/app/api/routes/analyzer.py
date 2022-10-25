@@ -1,9 +1,6 @@
 from api.routes.youtube import get_comments
 from api.objects import pipe, youtube
-import joblib
-from core.errors import PredictException
-from fastapi import APIRouter, HTTPException
-from loguru import logger
+from fastapi import APIRouter
 from api.types import *
 import heapq
 router = APIRouter()
