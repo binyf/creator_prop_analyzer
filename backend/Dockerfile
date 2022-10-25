@@ -2,7 +2,6 @@ FROM python:3.9.2
 
 ENV PYTHONUNBUFFERED 1
 
-EXPOSE 8080
 WORKDIR /app
 
 COPY poetry.lock pyproject.toml ./

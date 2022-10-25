@@ -1,6 +1,4 @@
 FROM node:lts-alpine3.16
-
-EXPOSE 3000
 WORKDIR "/"
 
 COPY package.json ./
