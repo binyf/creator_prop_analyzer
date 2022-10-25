@@ -1,9 +1,5 @@
-from email.policy import HTTP
 from api.objects import youtube
-import joblib
-from core.errors import PredictException
 from fastapi import APIRouter, HTTPException
-from loguru import logger
 from api.types import *
 import re
 

@@ -1,6 +1,5 @@
 from fastapi import APIRouter
 
-from api.routes import predictor
 from api.routes import youtube
 from api.routes import analyzer
 
